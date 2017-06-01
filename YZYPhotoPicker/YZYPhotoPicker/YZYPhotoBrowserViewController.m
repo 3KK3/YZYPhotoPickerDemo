@@ -174,6 +174,7 @@
         YZYPhotoAsset *photoAsset = [[YZYPhotoAsset alloc] init];
         photoAsset.photoName = [YZYPhotoDataManager getImageNameFromAsset: browserCell.photoAsset];
         photoAsset.uniqueID = [YZYPhotoDataManager getAssetIdentifier: browserCell.photoAsset];
+        photoAsset.photoAsset = browserCell.photoAsset;
         [_selecteAssets addObject: photoAsset];
         
     } else {
@@ -192,8 +193,9 @@
 }
 
 - (void)sendBtnClick {
-    
-    self.onCommitPhotos([_selecteAssets mutableCopy]);
+    if (self.onCommitPhotos) {
+        self.onCommitPhotos([_selecteAssets mutableCopy]);
+    }
 }
 
 - (void)refreshNaviBarState {

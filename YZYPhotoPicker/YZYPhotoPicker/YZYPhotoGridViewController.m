@@ -7,7 +7,6 @@
 //
 
 #import "YZYPhotoGridViewController.h"
-#import "YZYPhotoDataManager.h"
 #import "YZYPhotoGridCell.h"
 #import "YZYPhotoBrowserViewController.h"
 #import "YZYAlbumDropView.h"
@@ -39,6 +38,14 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
 
 @implementation YZYPhotoGridViewController
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _isImgType = YES;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -57,16 +64,10 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
 - (void)loadData {
     [YZYPhotoDataManager shareInstance].bReverse = YES;
     
-    if (_albumData) {
-        
-        [self reloaddDsignatedDataPhotos];
-    } else {
-        
-        [[YZYPhotoDataManager shareInstance] fetchCameraRollPhotoList:^(NSArray * photoList) {
-            _dataArray = photoList;
-            [_listCollectionView reloadData];
-        }];
-    }
+    [[YZYPhotoDataManager shareInstance] fetchCameraRollPhotoList:^(NSArray * photoList) {
+        _dataArray = photoList;
+        [_listCollectionView reloadData];
+    }];
     
     dispatch_queue_t global_t = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_async(global_t, ^{
@@ -198,12 +199,12 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
 
 #pragma mark --- tool method
 
-- (void)reloaddDsignatedDataPhotos {
-    [[YZYPhotoDataManager shareInstance] fetchPhotoListOfAlbumData: _albumData result:^(NSArray * photoList) {
-        _dataArray = photoList;
-        [_listCollectionView reloadData];
-    }];
-}
+//- (void)reloaddDsignatedDataPhotos {
+//    [[YZYPhotoDataManager shareInstance] fetchPhotoListOfAlbumData: _albumData result:^(NSArray * photoList) {
+//        _dataArray = photoList;
+//        [_listCollectionView reloadData];
+//    }];
+//}
 
 - (void)checkBtnState {
     if (_selectedArray.count > 0) {
@@ -286,8 +287,7 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
     [self dismissAlbumsListView];
     
     if (data) {
-        _albumData = data;
-        [self reloaddDsignatedDataPhotos];
+//        [self reloaddDsignatedDataPhotos];
        
         [[YZYPhotoDataManager shareInstance] fetchAlbumInfoWithThumbImgSize: CGSizeZero albumData: data fetchResult:^(NSDictionary * infoDic) {
            
@@ -319,14 +319,40 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
 - (void)sureBtnClick {
     
     NSMutableArray *assetsArray = [NSMutableArray arrayWithCapacity: _selectedArray.count];
-
-    for (YZYPhotoAsset *selectAsset in _selectedArray) {
+    
+    if (_isImgType) {
         
-        [assetsArray addObject: selectAsset.photoAsset];
+        dispatch_group_t serviceGroup = dispatch_group_create();
+        
+        for (YZYPhotoAsset *selectAsset in _selectedArray) {
+            
+            dispatch_group_enter(serviceGroup);
+
+            [[YZYPhotoDataManager shareInstance] fetchImageFromAsset: selectAsset.photoAsset type: _resolutionType targetSize: _targetSize result:^(UIImage *img) {
+                [assetsArray addObject: img];
+                
+                dispatch_group_leave(serviceGroup);
+            } ];
+        }
+        
+        dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+            if (_selectedCompletion) {
+                _selectedCompletion(assetsArray ,YES);
+            }
+        });
+
+    } else {
+        
+        for (YZYPhotoAsset *selectAsset in _selectedArray) {
+            
+            [assetsArray addObject: selectAsset.photoAsset];
+        }
+        
+        if (_selectedCompletion) {
+            _selectedCompletion(assetsArray ,NO);
+        }
     }
-    if (_selectedCompletion) {
-        _selectedCompletion(assetsArray ,NO);
-    }
+
     [self cancelBtnClick];
 }
 
@@ -358,9 +384,37 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
     
     browserVC.onCommitPhotos = ^(NSArray *resultArray) {
         
-        self.selectedCompletion(resultArray,NO);
-        
-        [self cancelBtnClick];
+        if (resultArray.count > 0) {
+            NSMutableArray *assetsArray = [NSMutableArray arrayWithCapacity: resultArray.count];
+            
+            if (_isImgType) {
+                
+                for (YZYPhotoAsset *selectAsset in resultArray) {
+                    
+                    [[YZYPhotoDataManager shareInstance] fetchImageFromAsset: selectAsset.photoAsset type: _resolutionType targetSize: _targetSize result:^(UIImage *img) {
+                        [assetsArray addObject: img];
+                    } ];
+                }
+                
+                if (_selectedCompletion) {
+                    _selectedCompletion(assetsArray ,YES);
+                }
+            } else {
+                
+                for (YZYPhotoAsset *selectAsset in resultArray) {
+                    
+                    [assetsArray addObject: selectAsset.photoAsset];
+                }
+                
+                if (_selectedCompletion) {
+                    _selectedCompletion(assetsArray ,NO);
+                }
+            }
+            [self cancelBtnClick];
+        }else {
+            _selectedCompletion(resultArray ,_isImgType);
+            [self cancelBtnClick];
+        }
     };
 }
 
@@ -384,7 +438,7 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
     
     NSMutableArray *tempArray = [NSMutableArray array];
 
-    for (YZYPhotoAsset *asset in _selectedArray) { // 每次循环败笔 懒得改 恩 就是这么任性
+    for (YZYPhotoAsset *asset in _selectedArray) { // 每次循环败笔
         [tempArray addObject: asset.uniqueID];
     }
     
@@ -445,45 +499,6 @@ static NSString *const cellIdentifier = @"YZYPhotoGridCell";
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     [self showBrowserVCWithDataArray: _dataArray selectIndex: indexPath.item];
-    
-//    id selectAsset = _dataArray[indexPath.item];
-//    YZYPhotoGridCell * cell = (YZYPhotoGridCell *)[_listCollectionView cellForItemAtIndexPath: indexPath];
-//
-//    if (_maxSelectCount == 1) {
-//        [cell selectCellItem: YES anim: YES];
-//        self.selectedCompletion(@[selectAsset] , NO);
-//        [self cancelBtnClick];
-//        return;
-//    }
-//    
-//    YZYPhotoAsset *asset = [[YZYPhotoAsset alloc] init];
-//    asset.photoName = [YZYPhotoDataManager getImageNameFromAsset: selectAsset];
-//    asset.uniqueID = [YZYPhotoDataManager getAssetIdentifier: selectAsset];
-//    asset.photoAsset = selectAsset;
-//    
-//    NSInteger selectedIndex = -1;
-//    
-//    for (NSInteger i = 0; i < _selectedArray.count; i ++) {
-//        
-//        YZYPhotoAsset *photoAsset = _selectedArray[i];
-//        if ([photoAsset.uniqueID isEqualToString: asset.uniqueID]) {
-//            selectedIndex = i;
-//            break;
-//        }
-//    }
-//    
-//    if (selectedIndex == -1 && _selectedArray.count < _maxSelectCount) { // 没有命中
-//        
-//        [_selectedArray addObject: asset];
-//        [cell selectCellItem: YES anim: YES];
-//    } else {
-//        if (selectedIndex != -1) {
-//            [_selectedArray removeObjectAtIndex: selectedIndex];
-//            [cell selectCellItem: NO anim: YES];
-//        }
-//    }
-//    
-//    [self checkBtnState]; 
 }
 
 #pragma mark --- 拍照

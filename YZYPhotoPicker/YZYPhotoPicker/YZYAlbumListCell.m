@@ -12,6 +12,8 @@
 
 static CGFloat const kAlubmImgViewW = 50;
 
+NSString *const AlbumListCellIdentifier = @"AlbumListCellIdentifier";
+
 @implementation YZYAlbumListCell
 {
     UIImageView * _thumbImgView;

@@ -10,7 +10,6 @@
 #import "YZYPhotoDataManager.h"
 #import "YZYAlbumListCell.h"
 #import "UIView+Addition.h"
-#import "YZYAlbumListViewController.h"
 
 @interface YZYAlbumDropView () <UICollectionViewDataSource , UICollectionViewDelegate>
 {

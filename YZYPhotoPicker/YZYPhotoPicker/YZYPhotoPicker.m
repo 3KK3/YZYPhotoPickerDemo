@@ -8,10 +8,20 @@
 
 #import "YZYPhotoPicker.h"
 #import "YZYPhotoDataManager.h"
-#import "YZYAlbumListViewController.h"
 #import "YZYPhotoGridViewController.h"
 
 @implementation YZYPhotoPicker
+
+- (instancetype)init {
+    
+    self = [super init];
+    if (self) {
+        _isImgType = YES;
+        _resolutionType = ePhotoResolutionTypeOrigin;
+        _targetSize = [UIScreen mainScreen].bounds.size;
+    }
+    return self;
+}
 
 - (void)showPhotoPickerWithController:(id)controller maxSelectCount:(NSUInteger)maxCount completion:(void (^)(NSArray *,BOOL))completion {
     
@@ -41,41 +51,13 @@
 - (void)showPhotoListVCWithController:(UIViewController *)controller  maxSelectCount:(NSUInteger)maxCount completion:(void (^)(NSArray * , BOOL isImgType))completion {
     
     dispatch_async(dispatch_get_main_queue(), ^{
-//        
-//        YZYAlbumListViewController * albumListVC = [[YZYAlbumListViewController alloc] init];
-//        UINavigationController * listNav = [[UINavigationController alloc] initWithRootViewController: albumListVC];
-//        [controller presentViewController: listNav animated: YES completion: nil];
-//        
-//        albumListVC.selectCompletion = ^(id albumData) {
-//            
-//            YZYPhotoGridViewController * photoListVC = [[YZYPhotoGridViewController alloc] init];
-//            photoListVC.maxSelectCount = maxCount;
-//            photoListVC.albumData = albumData;
-//            photoListVC.selectedCompletion = ^ (NSArray * imagesArray) {
-//                
-//                if (completion) {
-//                    completion(imagesArray);
-//                }
-//            };
-//            
-//            [listNav pushViewController: photoListVC animated: YES];
-//        };
-//        
-//        YZYPhotoGridViewController * photoListVC = [[YZYPhotoGridViewController alloc] init];
-//        photoListVC.maxSelectCount = maxCount;
-//        photoListVC.selectedCompletion = ^ (NSArray * imagesArray) {
-//            
-//            if (completion) {
-//                completion(imagesArray);
-//            }
-//        };
-//        
-//        [listNav pushViewController: photoListVC animated: NO];
         
         YZYPhotoGridViewController * photoListVC = [[YZYPhotoGridViewController alloc] init];
         UINavigationController * listNav = [[UINavigationController alloc] initWithRootViewController: photoListVC];
-        
+        photoListVC.isImgType = _isImgType;
+        photoListVC.resolutionType = _resolutionType;
         photoListVC.maxSelectCount = maxCount;
+        photoListVC.targetSize = _targetSize;
         photoListVC.selectedCompletion = ^ (NSArray * imagesArray, BOOL isImgType) {
             
             if (completion) {

@@ -10,6 +10,8 @@
 
 #define kAlbumListCellH 60
 
+extern NSString *const AlbumListCellIdentifier;
+
 @interface YZYAlbumListCell : UICollectionViewCell
 
 - (void)setupCellWithData:(id)data;

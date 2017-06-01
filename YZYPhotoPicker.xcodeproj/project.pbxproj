@@ -14,7 +14,6 @@
 		C58246371EB07ADF00DDF360 /* UIView+Addition.m in Sources */ = {isa = PBXBuildFile; fileRef = C582461C1EB07ADF00DDF360 /* UIView+Addition.m */; };
 		C58246391EB07ADF00DDF360 /* YZYAlbumDropView.m in Sources */ = {isa = PBXBuildFile; fileRef = C58246201EB07ADF00DDF360 /* YZYAlbumDropView.m */; };
 		C582463A1EB07ADF00DDF360 /* YZYAlbumListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C58246221EB07ADF00DDF360 /* YZYAlbumListCell.m */; };
-		C582463B1EB07AE000DDF360 /* YZYAlbumListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C58246241EB07ADF00DDF360 /* YZYAlbumListViewController.m */; };
 		C582463C1EB07AE000DDF360 /* YZYPhotoAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = C58246261EB07ADF00DDF360 /* YZYPhotoAsset.m */; };
 		C582463D1EB07AE000DDF360 /* YZYPhotoBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C58246281EB07ADF00DDF360 /* YZYPhotoBrowserCell.m */; };
 		C582463E1EB07AE000DDF360 /* YZYPhotoBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C582462A1EB07ADF00DDF360 /* YZYPhotoBrowserViewController.m */; };
@@ -60,8 +59,6 @@
 		C58246201EB07ADF00DDF360 /* YZYAlbumDropView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YZYAlbumDropView.m; sourceTree = "<group>"; };
 		C58246211EB07ADF00DDF360 /* YZYAlbumListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YZYAlbumListCell.h; sourceTree = "<group>"; };
 		C58246221EB07ADF00DDF360 /* YZYAlbumListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YZYAlbumListCell.m; sourceTree = "<group>"; };
-		C58246231EB07ADF00DDF360 /* YZYAlbumListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YZYAlbumListViewController.h; sourceTree = "<group>"; };
-		C58246241EB07ADF00DDF360 /* YZYAlbumListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YZYAlbumListViewController.m; sourceTree = "<group>"; };
 		C58246251EB07ADF00DDF360 /* YZYPhotoAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YZYPhotoAsset.h; sourceTree = "<group>"; };
 		C58246261EB07ADF00DDF360 /* YZYPhotoAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YZYPhotoAsset.m; sourceTree = "<group>"; };
 		C58246271EB07ADF00DDF360 /* YZYPhotoBrowserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YZYPhotoBrowserCell.h; sourceTree = "<group>"; };
@@ -129,8 +126,6 @@
 				C58246201EB07ADF00DDF360 /* YZYAlbumDropView.m */,
 				C58246211EB07ADF00DDF360 /* YZYAlbumListCell.h */,
 				C58246221EB07ADF00DDF360 /* YZYAlbumListCell.m */,
-				C58246231EB07ADF00DDF360 /* YZYAlbumListViewController.h */,
-				C58246241EB07ADF00DDF360 /* YZYAlbumListViewController.m */,
 				C58246251EB07ADF00DDF360 /* YZYPhotoAsset.h */,
 				C58246261EB07ADF00DDF360 /* YZYPhotoAsset.m */,
 				C58246271EB07ADF00DDF360 /* YZYPhotoBrowserCell.h */,
@@ -376,7 +371,6 @@
 				C582463E1EB07AE000DDF360 /* YZYPhotoBrowserViewController.m in Sources */,
 				C582463D1EB07AE000DDF360 /* YZYPhotoBrowserCell.m in Sources */,
 				C5F466161EB0795A006DC730 /* main.m in Sources */,
-				C582463B1EB07AE000DDF360 /* YZYAlbumListViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,7 +466,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -515,7 +509,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

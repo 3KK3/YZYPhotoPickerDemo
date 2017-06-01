@@ -8,8 +8,12 @@
 
 #import "ViewController.h"
 #import "YZYPhotoPicker.h"
+#import "UIView+Addition.h"
 
 @interface ViewController ()
+{
+    UIView *_view;
+}
 
 @end
 
@@ -26,31 +30,47 @@
     button.backgroundColor = [UIColor greenColor];
     [button addTarget: self action: @selector(buttonClick) forControlEvents: UIControlEventTouchUpInside];
     
+    _view = [[UIView alloc] initWithFrame: CGRectMake(0, button.maxY + 10, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - (button.maxY + 10))];
+    
+    _view.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview: _view];
+    
 }
 
 - (void)buttonClick {
     
     YZYPhotoPicker *photoPicker = [[YZYPhotoPicker alloc] init];
     
-    
+    photoPicker.isImgType = NO;
     [photoPicker showPhotoPickerWithController: self maxSelectCount: 4 completion:^(NSArray *imageSources, BOOL isImgType) {
         
+        [_view.subviews makeObjectsPerformSelector: @selector(removeFromSuperview)];
+        
+        NSInteger i = 0;
+
         if (isImgType) { // 如果是UIImage
             
+            for (UIImage *img in imageSources) {
+                
+                UIImageView *imgView = [[UIImageView alloc] initWithFrame: CGRectMake(i % 3 * 105, i / 3 * 105, 100, 100)];
+                imgView.image = img;
+                [_view addSubview: imgView];
+                
+                i ++;
+            }
         } else {  // 是照片资源 iOS8 以下为AlAsset  iOS8以上为PHAsset
             
-        //可以使用单例 YZYPhotoDataManager 中的如下两个方法处理得到UIImage
-            
-            /**
-             *  根据照片分辨率、照片大小、照片资源 获取UIImage targetSize仅iOS8后支持
-             */
-            //- (void)fetchImageFromAsset:(id)asset type:(PhotoResolutionType)nType targetSize:(CGSize)size result:(void (^)(UIImage *))result;
-            /**
-             *  根据照片分辨率、照片大小、照片索引 获取UIImage targetSize仅iOS8后支持
-             */
-            //- (void)fetchImageByIndex:(NSInteger)nIndex type:(PhotoResolutionType)nType  targetSize:(CGSize)size result:(void (^)(UIImage *))result;
-            
-            
+            for (id asset in imageSources) {
+                
+                [[YZYPhotoDataManager shareInstance] fetchImageFromAsset: asset type: ePhotoResolutionTypeScreenSize targetSize: [UIScreen mainScreen].bounds.size result:^(UIImage *img) {
+                    UIImageView *imgView = [[UIImageView alloc] initWithFrame: CGRectMake(i % 3 * 105, i / 3 * 105, 100, 100)];
+                    
+                    imgView.image = img;
+                    [_view addSubview: imgView];
+                }];
+                
+                i ++;
+            }
         }
     }];
 
